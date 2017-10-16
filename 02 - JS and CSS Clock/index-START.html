@@ -8,10 +8,17 @@
 
 
     <div class="clock">
+      <div class="center"></div>
       <div class="clock-face">
-        <div class="hand hour-hand"></div>
-        <div class="hand min-hand"></div>
-        <div class="hand second-hand"></div>
+        <div class="hand hour-hand">
+          <div class="inner"></div>
+        </div>
+        <div class="hand min-hand">
+          <div class="inner"></div>
+        </div>
+        <div class="hand second-hand">
+          <div class="inner"></div>
+        </div>
       </div>
     </div>
 
@@ -56,19 +63,105 @@
       transform: translateY(-3px); /* account for the height of the clock hands */
     }
 
+    .center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate3d(-50%, -50%, 0);
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: black;
+    }
+
+
     .hand {
       width:50%;
       height:6px;
-      background:black;
+      /*background:black;*/
       position: absolute;
       top:50%;
+      transform-origin: 100% center;
+    }
+
+    .inner {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+      background-color: black;
+    }
+
+    .hour-hand .inner {
+      width: 50%;
+    }
+    .min-hand .inner {
+      width: 100%;
+    }
+    .second-hand .inner {
+      width: 100%;
+      height: 1px;
+      top: 1px;
     }
 
   </style>
 
   <script>
+  (() => {
+  // -------------------------
+  // HELPERS
 
+  // 0 is all the way left, we want to start at the 'top' of the clock
+  const ROTATION_OFFSET = 90;
 
-  </script>
+  // conversions for time range vs rotation range
+  const intervals = {
+    hours: 360 / 24,
+    minutes: 360 / 60,
+    seconds: 360 / 60
+  };
+
+  // grab the hand DOm elements
+  const hands = {
+    hours: document.querySelector('div.hour-hand'),
+    minutes: document.querySelector('div.min-hand'),
+    seconds: document.querySelector('div.second-hand')
+  };
+
+  // -------------------------
+  // UTILITY
+
+  // func: get the current time, note the conversion for hours from 23 base to 12 base
+  const getTimeInfo = (date = new Date()) => ({
+    hours: date.getHours() % 12 ? date.getHours() % 12 : 12,
+    minutes: date.getMinutes(),
+    seconds: date.getSeconds()
+  });
+
+  // func: given name of interval, and a time value, calculates the rotation to apply
+  const getRotationDegrees = (intervalKey, timeVal) =>
+    90 + intervals[intervalKey] * parseInt(timeVal);
+
+  // -------------------------
+  // EXECUTION FUNCTIONS
+
+  const updateClock = (elems, times) => {
+    for (let handName in elems) {
+      elems[handName].style.transform = `rotate(${getRotationDegrees(
+        handName,
+        times[handName]
+      )}deg)`;
+    }
+  };
+
+  // initial call to position the hands on load
+  updateClock(hands, getTimeInfo());
+
+  // run the clock indefinitely
+  const timer = setInterval(() => {
+    updateClock(hands, getTimeInfo());
+  }, 1000);
+})();
+</script>
 </body>
 </html>
