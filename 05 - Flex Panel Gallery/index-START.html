@@ -22,11 +22,27 @@
     }
 
     .panels {
+      /* flex content */
+      display: flex;
+      flex-flow: row nowrap;
+      align-items: stretch;
+      width: 100%;
+      /* end flex content */
+
       min-height:100vh;
       overflow: hidden;
     }
 
     .panel {
+
+      /* flex content */
+      flex: 1 0 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 15vh 0;
+      /* end flex content */
+
       background:#6B0F9C;
       box-shadow:inset 0 0 0 5px rgba(255,255,255,0.1);
       color:white;
@@ -44,16 +60,23 @@
     }
 
 
-    .panel1 { background-image:url(https://source.unsplash.com/gYl-UtwNg_I/1500x1500); }
+    /*.
+      old images, wouldnt load
+     panel1 { background-image:url(https://source.unsplash.com/gYl-UtwNg_I/1500x1500); }
     .panel2 { background-image:url(https://source.unsplash.com/rFKUFzjPYiQ/1500x1500); }
     .panel3 { background-image:url(https://images.unsplash.com/photo-1465188162913-8fb5709d6d57?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&cs=tinysrgb&w=1500&h=1500&fit=crop&s=967e8a713a4e395260793fc8c802901d); }
     .panel4 { background-image:url(https://source.unsplash.com/ITjiVXcwVng/1500x1500); }
-    .panel5 { background-image:url(https://source.unsplash.com/3MNzGlQM7qs/1500x1500); }
+    .panel5 { background-image:url(https://source.unsplash.com/3MNzGlQM7qs/1500x1500); }*/
+    .panel1 { background-image:url(https://cdn.allwallpaper.in/wallpapers/1920x1080/12042/gorgeous-clouds-in-the-valley-hdr-1920x1080-wallpaper.jpg); }
+    .panel2 { background-image:url(https://cdn.allwallpaper.in/wallpapers/1500x1500/15213/original-content-clouds-scenic-skies-skyscapes-1500x1500-wallpaper.jpg); }
+    .panel3 { background-image:url(https://cdn.allwallpaper.in/wallpapers/1800x1200/16332/green-trees-autumn-wood-bridges-hdr-photography-colors-1800x1200-wallpaper.jpg); }
+    .panel4 { background-image:url(https://cdn.allwallpaper.in/wallpapers/3008x2000/584/flora-flowers-macro-nature-3008x2000-wallpaper.jpg); }
+    .panel5 { background-image:url(https://cdn.allwallpaper.in/wallpapers/1920x1080/6533/beaches-evening-landscapes-nature-rocky-1920x1080-wallpaper.jpg); }
 
     .panel > * {
       margin:0;
       width: 100%;
-      transition:transform 0.5s;
+      transition:transform 0.5s, opacity 0.5s;
     }
 
     .panel p {
@@ -62,12 +85,30 @@
       text-shadow:0 0 4px rgba(0, 0, 0, 0.72), 0 0 14px rgba(0, 0, 0, 0.45);
       font-size: 2em;
     }
+    .panel p:nth-child(1) {
+      /* assignment */
+      opacity: 0;
+      transform: translateY(-30px);
+      /* assignment end */
+    }
     .panel p:nth-child(2) {
       font-size: 4em;
+    }
+    .panel p:nth-child(3) {
+      /* assignment */
+      opacity: 0;
+      transform: translateY(30px);
+      /* assignment end */
     }
 
     .panel.open {
       font-size:40px;
+    }
+
+    .panel.open p:nth-child(1),
+    .panel.open p:nth-child(3) {
+      opacity: 1;
+      transform: translateY(0);
     }
 
   </style>
@@ -102,8 +143,22 @@
   </div>
 
   <script>
+  (() => {
+  const toggleOpen = elem => {
+    elem.classList.contains('open')
+      ? elem.classList.remove('open')
+      : elem.classList.add('open');
+  };
 
-  </script>
+  const panels = document.querySelectorAll('.panel');
+  // console.log(Array.isArray(panels));
+  Array.from(panels).map(p => {
+    p.addEventListener('click', e => {
+      toggleOpen(p);
+    });
+  });
+})();
+</script>
 
 
 
