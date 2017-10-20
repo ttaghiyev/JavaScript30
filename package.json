@@ -1,0 +1,17 @@
+{
+  "name": "JavaScript30",
+  "version": "1.0.0",
+  "description": "30 day challenge",
+  "main": "index.js",
+  "repository": "https://github.com/ttaghiyev/JavaScript30.git",
+  "author": "ttaghiyev <teytagiyev@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "test6": "babel-tape-runner 06\\ -\\ Type\\ Ahead/test.js"
+  },
+  "dependencies": {
+    "babel-tape-runner": "^2.0.1",
+    "tape": "^4.8.0"
+  }
+}
