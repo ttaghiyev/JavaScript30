@@ -7,6 +7,60 @@
 <body>
 <canvas id="draw" width="800" height="800"></canvas>
 <script>
+const canvas = document.querySelector('#draw');
+const ctx = canvas.getContext('2d');
+
+// set width / height to window
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+// color of the stroke
+ctx.strokeStyle = 'BADA55';
+// how does the line look at the end
+ctx.lineCap = 'round';
+// how does the line look when it's combined with another
+ctx.lineJoin = 'round';
+
+// detect a draw state, like a mouse down + drag
+let isDrawing = false;
+
+// drawing needs a starting point
+let lastX = 0;
+let lastY = 0;
+let hue = 0;
+
+const draw = e => {
+  if (!isDrawing) return false;
+
+  hue = hue + 3;
+
+  if (hue >= 360) {
+    hue = 0;
+  }
+
+  ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+  ctx.beginPath();
+  ctx.moveTo(lastX, lastY);
+  ctx.lineTo(e.offsetX, e.offsetY);
+  ctx.lineWidth = 20;
+  ctx.stroke();
+
+  // es6 destruct technique
+  [lastX, lastY] = [e.offsetX, e.offsetY];
+};
+
+const toggleState = () => {
+  isDrawing = !isDrawing;
+};
+
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mousedown', e => {
+  lastX = e.offsetX;
+  lastY = e.offsetY;
+  isDrawing = true;
+});
+canvas.addEventListener('mouseup', () => (isDrawing = false));
+canvas.addEventListener('mouseout', () => (isDrawing = false));
 </script>
 
 <style>
