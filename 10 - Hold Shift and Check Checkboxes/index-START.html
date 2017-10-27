@@ -99,6 +99,81 @@
   </div>
 
 <script>
+(() => {
+  // get all the items, and index them
+  const $items = Array.from(document.querySelectorAll('.item'));
+
+  // @TODO add state
+
+  // selection states
+  let isSelectMode = false;
+  let lastChecked = null;
+
+  // ----------------
+  // HANDLE SHIFT KEY
+
+  // check if the keycode is for 'shift'
+  const isShift = code => code === 16;
+
+  // if we are the shift key, and we're not a repeated down event, set true
+  // when a key is held down it constantly fires 'keypress' events.
+  const setShiftFlag = e =>
+    !isShift(e.which) || e.repeat ? true : (isSelectMode = true);
+
+  // if the key released is shift, set flag to false
+  const unsetShiftFlag = e =>
+    !isShift(e.which) ? false : (isSelectMode = false);
+
+  // watch all keypressed, handler functions know to handle 'shift'
+  document.addEventListener('keydown', setShiftFlag);
+  document.addEventListener('keyup', unsetShiftFlag);
+
+  // ----------------
+  // HANDLE CHECKBOX CLICK
+
+  // given an element, checks children and returns the input element
+  const findChildInput = arr =>
+    Array.from(arr).find(child => child.tagName === 'INPUT');
+
+  // given an array of element, and the range, check off the inputs in that range
+  // (not including the start and end)
+  const autoSelect = (elemArr, rangeStart, rangeEnd) =>
+    elemArr
+      .slice(rangeStart, rangeEnd)
+      .forEach(item => (findChildInput(item.children).checked = true));
+
+  // cases:
+  // 1. we've clicked a checked input: uncheck it and return
+  // 2. we've clicked a unchecked input, shift is not held: check the input + set start range
+  // 3. we've clicked a unchecked input, shift is held: check all elements inbetween + set new start range
+  const handleCheckboxClick = (elem, currIndex) => {
+    // if we were checked, clear out last elem and return
+    if (!elem.checked) {
+      return (lastChecked = null);
+    }
+
+    // if we werent checked, and the boundary isnt set
+    if (isSelectMode && lastChecked !== null) {
+      lastChecked > currIndex
+        ? autoSelect($items, currIndex, lastChecked + 1)
+        : autoSelect($items, lastChecked + 1, currIndex);
+    }
+
+    // regardless of what happens, when a new item is checked, set the lastChecked
+    return (lastChecked = currIndex);
+  };
+
+  // for each item, bind the click event for the input along with the items array index
+  $items.forEach((item, i) => {
+    try {
+      findChildInput(item.children).addEventListener('click', e =>
+        handleCheckboxClick(e.target, i)
+      );
+    } catch (err) {
+      console.error(`error finding input: ${err}`);
+    }
+  });
+})();
 </script>
 </body>
 </html>
