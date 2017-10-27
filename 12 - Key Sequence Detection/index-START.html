@@ -1,12 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>Key Detection</title>
   <script type="text/javascript" src="http://www.cornify.com/js/cornify.js"></script>
 </head>
+
 <body>
-<script>
-</script>
+  <script>
+    (() => {
+      // CONSTANTS
+
+      // up up down down left right left right b a
+      const sequence = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+
+      // is the sequene started? (first key of the sequence)
+      const DEF_IS_STARTED = false;
+
+      // how many have we gottenr right so far?
+      const DEF_NUM_RIGHT = 0;
+
+      const appState = {
+        isStarted: DEF_IS_STARTED,
+        numRight: DEF_NUM_RIGHT
+      };
+
+      const resetState = state => {
+        state.isStarted = DEF_IS_STARTED;
+        state.numRight = DEF_NUM_RIGHT;
+      }
+
+      const handleKeyPress = (e, state) => {
+        // if we don't have a sequence in motion, ignore everything but the up arrow.
+        // TODO clean this up
+        if (!state.isStarted && e.which !== sequence[state.numRight]) {
+          return false;
+        }
+
+        // we've started the sequence
+        if (!state.isStarted && e.which === sequence[state.numRight]) {
+          // console.info('starting the sequence...');
+          state.isStarted = true;
+          state.numRight = state.numRight + 1;
+          return true;
+        }
+
+        // we're continuing the sequence, but we put in the wrong value
+        // console.log(`comparing ${e.which} to ${state.numRight} which is ${sequence[state.numRight]}`);
+        if (e.which !== sequence[state.numRight]) {
+          // console.warn('wrong sequence, resetting');
+          resetState(state);
+          return false;
+        }
+
+        // if nothing else went wrong, inrement the input counter
+        // console.log('so far so good...');
+        return state.numRight = state.numRight + 1;
+      }
+
+      // listen for any keystrokes
+      window.addEventListener('keydown', e => handleKeyPress(e, appState));
+    })()
+  </script>
 </body>
+
 </html>
